@@ -1,61 +1,7 @@
 name: Build (Android)
-on:
-  push: 
-    paths:
-      - 'noty-android/**'
-  pull_request:
-    paths:
-      - 'noty-android/**'
+on: [push]
 
 jobs:
-  build:
-    name: Build Android
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up JDK 12
-        uses: actions/setup-java@v1
-        with:
-          java-version: 12
-
-      - name: Cache Gradle and wrapper
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Grant Permission to Execute
-        run: chmod +x gradlew
-        working-directory: noty-android
-
-      - name: 🏗 Build with Gradle 🛠️
-        run: ./gradlew build releaseComposeCompilerHtmlReport --stacktrace
-        working-directory: noty-android
-
-      - name: 🚀 Upload APK 📱
-        uses: actions/upload-artifact@v2
-        with:
-          name: app
-          path: noty-android/**/*.apk
-          retention-days: 3
-          
-      - name: Update compose compiler metrics and report in docs
-        if: github.event_name == 'push'
-        run: |
-          mv -f noty-android/app/composeapp/build/compose_report/index.html docs/pages/noty-android/compose_report.html
-          git config user.name $GITHUB_ACTOR
-          git config user.email action@github.com
-          git add docs/pages/noty-android/compose_report.html
-          git commit -m "Update compose compiler metric and report"
-          git status
-          git push
-
   test:
     name: Android Test
     runs-on: macos-latest
