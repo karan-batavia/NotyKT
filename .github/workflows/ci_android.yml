@@ -77,5 +77,4 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
-          script: ./gradlew connectedCheck
-        working-directory: noty-android
+          script: cd noty-android && ./gradlew connectedCheck
